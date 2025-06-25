@@ -1,0 +1,96 @@
+/* Variables & Base -------------------------------------------------- */
+:root{
+  --gold1:#56adf5;
+  --gold2:#a9d5ff;
+  --spot-x:50%;
+  --spot-y:50%;
+}
+*{box-sizing:border-box;margin:0;padding:0;font-family:Inter,sans-serif;}
+
+/* Full-page animated background ------------------------------------ */
+body{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  overflow:hidden;color:#ececec;padding:32px;
+
+  background:
+    radial-gradient(1200px at var(--spot-x) var(--spot-y),
+      hsla(210,90%,60%,.1) 0%, hsla(210,90%,60%,0) 60%),
+    url("data:image/svg+xml;utf8,\<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80' fill='none' opacity='.04'>\<filter id='f'><feTurbulence type='fractalNoise' baseFrequency='.9'/></filter>\<rect width='80' height='80' filter='url(%23f)'/>\</svg>") repeat,
+    linear-gradient(300deg,#0b0b0c 0%,#11131b 25%,#182940 50%,#10131d 75%,#0b0b0c 100%);
+
+  background-size:100% 100%,80px 80px,600% 600%;
+  background-position:center center,0 0,0% 50%;
+  animation:auroraShift 26s ease-in-out infinite;
+}
+@keyframes auroraShift{
+  0%{background-position:center center,0 0,0% 50%}
+  50%{background-position:center center,0 0,100% 50%}
+  100%{background-position:center center,0 0,0% 50%}
+}
+
+/* Card – Deep Glass for dark mode ---------------------------------- */
+.card{
+  /* keep a predictable footprint */
+  width:clamp(340px, 90vw, 480px);   /* never narrower than 340px, never wider than 480px */
+  min-height:440px;                  /* stable silhouette even before FAQ opens */
+
+  position:relative;
+  padding:44px 60px;
+
+  /* glassy: higher blur + contrast, but darker tint to suit dark bg */
+  background:rgba(255, 255, 255, 0.01);
+  backdrop-filter:blur(10px) saturate(100%) contrast(120%);
+  -webkit-backdrop-filter:blur(22px) saturate(180%) contrast(120%);
+
+  border-radius:22px;
+
+  /* layered shadows: a crisp rim + soft glow */
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.12) inset,  /* inner edge highlight */
+    0 10px 28px rgba(0,0,0,0.55),             /* deep drop shadow    */
+    0  4px  8px rgba(0,0,0,0.35);             /* soft ambient shadow */
+
+  overflow:hidden;  /* clip the overlay shine */
+}
+
+/* highlight / shade sweep ------------------------------------------ */
+.card::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  pointer-events:none;
+  mix-blend-mode:overlay;
+
+  /* diagonal shimmer: bright top-left → dark bottom-right */
+  background:linear-gradient(135deg,
+    rgba(163, 163, 163, 0.28) 0%,
+    rgba(255,255,255,0.08) 40%,
+    rgba(0,0,0,0.20) 90%);
+}
+
+/* Headings & Mail --------------------------------------------------- */
+h1{
+  font-size:1.8rem;font-weight:600;margin-bottom:8px;
+  background:linear-gradient(45deg,var(--gold1),var(--gold2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+p{margin-bottom:24px;color:#b5b5b5;line-height:1.45}
+a.mail{
+  display:inline-block;padding:12px 28px;border-radius:14px;
+  background:var(--gold1);color:#1e1e1e;font-weight:600;text-decoration:none;
+  transition:transform .25s,box-shadow .25s;margin-bottom:32px;
+}
+a.mail:hover{transform:translateY(-3px);box-shadow:0 0 12px var(--gold2);}
+
+/* FAQ accordion ----------------------------------------------------- */
+details{border-radius:14px;margin-bottom:12px;background:rgba(255,255,255,.05);
+        transition:background .25s}
+details:hover{background:rgba(255,255,255,.10)}
+summary{list-style:none;display:flex;align-items:center;gap:10px;cursor:pointer;
+        padding:16px 20px;font-weight:600;color:var(--gold2);user-select:none}
+summary::-webkit-details-marker{display:none}
+summary .arrow{transition:transform .35s cubic-bezier(.4,0,.2,1)}
+details[open] summary .arrow{transform:rotate(90deg)}
+.faq-content{overflow:hidden;max-height:0;padding:0 20px;
+             transition:max-height .35s cubic-bezier(.4,0,.2,1),padding .35s}
